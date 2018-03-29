@@ -147,7 +147,32 @@ O procedimento seguinte fornece um manual de consulta rápida para administrador
 Actualizar a partir de uma versão anterior
 ------------------------------------------
 
-        ```
+É possível utilizar um método de instalação automático a partir de um script que detectará se o cliente RMS com SP2 está instalado. Se o cliente não estiver instalado, o script actualizará o actual cliente ou instalará o cliente RMS com SP2. O script é o seguinte:
+
+
+```
+    Set objShell = Wscript.CreateObject("Wscript.Shell")
+    Set objWindowsInstaller = Wscript.CreateObject("WindowsInstaller.Installer") 
+    Set colProducts = objWindowsInstaller.Products 
+
+    For Each product In colProducts 
+    strProductName = objWindowsInstaller.ProductInfo (product, "ProductName")
+
+    if strProductName = "Windows Rights Management Client with Service Pack 2" then
+    strInstallFlag = "False"
+    Exit For
+    else
+    strInstallFlag = "True"
+    end if
+    Seguinte
+
+    if strInstallFlag = "True" then
+    objShell.run "WindowsRightsManagementServicesSP2-KB917275-Client-ENU.exe -override 1 /I MsDrmClient.msi REBOOT=ReallySuppress /q -override 2 /I RmClientBackCompat.msi REBOOT=ReallySuppress /q "
+    else
+    wscript.echo "No installation required"
+    end if
+```
+
 | ![](images/Cc747749.note(WS.10).gif)Nota                                         |
 |---------------------------------------------------------------------------------------------------------------|
 | Este script não funciona com o Windows Vista uma vez que o cliente RMS está incorporado no sistema operativo. |
